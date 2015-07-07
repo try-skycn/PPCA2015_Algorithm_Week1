@@ -126,7 +126,7 @@ struct freeway{
 	vehicle &getCell(POS pos){
 		return cells[pos.first][pos.second.x];
 	}
-	bool occupied(int _lane, mint pos){
+	bool occupied(int _lane, mint pos) const{
 		return cells[_lane][pos.x].type != none;
 	}
 	int frontGap(POS pos){
@@ -252,8 +252,24 @@ struct freeway{
 		printf("\n");
 	}
 	
+	int mean_speed() const{
+		int ret = 0, total_vehicles = 0;
+		for(int i = 0; i < total_lanes; ++i){
+			for(int j = 0; j < total_cells; ++j){
+				if(occupied(i, j)){
+					ret += cells[i][j].speed;
+					++total_vehicles;
+				}
+			}
+		}
+		if(ret % total_vehicles < total_vehicles / 2)
+			return ret / total_vehicles;
+		else return ret / total_vehicles + 1;
+	}
+	
 	void print(){
 		static mint stpos(0);
+		stpos += mean_speed();
 		int rows = total_cells / width_of_screen;
 		for(int r = 0; r < rows; ++r){
 			print(stpos + r * width_of_screen, stpos + (r + 1) * width_of_screen);
@@ -261,7 +277,6 @@ struct freeway{
 		if(total_cells % width_of_screen){
 			print(stpos + rows * width_of_screen, stpos + total_cells);
 		}
-		stpos += float_speed;
 	}
 };
 

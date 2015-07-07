@@ -15,8 +15,8 @@ bool have_inited = false;
 
 int rand_between(int lower, int upper){
 	if (!have_inited){
-		//srand((unsigned int)time(0));
-		srand(34277);
+		srand((unsigned int)time(0));
+		//srand(34277);
 		have_inited = true;
 	}
 	return lower + rand() % (upper - lower);
