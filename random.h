@@ -10,5 +10,7 @@
 #define __PPCA_Week1__random__
 
 int rand_between(int, int);
+int rand_under(int);
+bool rand_bool(int);
 
 #endif /* defined(__PPCA_Week1__random__) */

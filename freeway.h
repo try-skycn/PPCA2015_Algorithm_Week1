@@ -30,7 +30,7 @@ public:
 
 class freeway{
 private:
-	vehicle_lane lanes[total_lane];
+	vehicle_lane lanes[total_lanes];
 	
 private:
 	bool can_turn_left();

@@ -75,7 +75,7 @@ bool vehicle::is_leftmost() const{
 }
 
 bool vehicle::is_rightmost() const{
-	return lane == total_lane - 1;
+	return lane == total_lanes - 1;
 }
 
 void vehicle::move_left(){
@@ -84,17 +84,4 @@ void vehicle::move_left(){
 
 void vehicle::move_right(){
 	++lane;
-}
-
-
-
-vehicle_pointer::vehicle_pointer(vehicle *_p_vehicle) : p_vehicle(_p_vehicle){
-}
-
-bool vehicle_pointer::operator<(const vehicle_pointer &_r) const{
-	return p_vehicle->position < _r.p_vehicle->position;
-}
-
-vehicle *vehicle_pointer::operator->(){
-	return p_vehicle;
 }
