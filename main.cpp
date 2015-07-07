@@ -38,6 +38,7 @@ struct modint{
 	void operator+=(int del){
 		x += del;
 		while(x >= _mod) x -= _mod;
+		while(x < 0) x += _mod;
 	}
 	modint<_mod> operator+(int del){
 		return modint<_mod>(x + del);
@@ -99,11 +100,11 @@ struct vehicle{
 	int speed_limit(){
 		switch(type){
 			case car:
-				return 6;
+				return speed_of_car;
 			case bus:
-				return 5;
+				return speed_of_bus;
 			case truck:
-				return 3;
+				return speed_of_truck;
 			default:
 				return 0;
 		}
@@ -223,8 +224,8 @@ struct freeway{
 	
 	void init(){
 		queue<STATE> Q;
-		for(int i = 0; i < 2; ++i){
-			for(int j = 0; j < 50; ++j){
+		for(int i = init_st_lane; i < init_ed_lane; ++i){
+			for(int j = init_st_cell; j < init_ed_cell; ++j){
 				bool ret = rand_bool(occupation);
 				if(ret){
 					STATE input = STATE(vehicle(rand_type()), POS(i, j));
@@ -235,26 +236,32 @@ struct freeway{
 		reset(Q);
 	}
 	
-	void print(int l, int r){
+	void print(mint l, mint r){
 		for(int i = 0; i < total_lanes; ++i){
-			for(int j = l; j < r; ++j){
+			if(l == r){
+				printf("%c", switchToChar(cells[i][l].type));
+				l++;
+			}
+			for(mint j = l; j != r; j++){
 				printf("%c", switchToChar(cells[i][j].type));
 			}
 			printf("\n");
 		}
-		for(int j = l; j < r; ++j)
+		for(mint j = l; j != mint(r); j++)
 			printf("-");
 		printf("\n");
 	}
 	
 	void print(){
+		static mint stpos(0);
 		int rows = total_cells / width_of_screen;
 		for(int r = 0; r < rows; ++r){
-			print(r * width_of_screen, (r + 1) * width_of_screen);
+			print(stpos + r * width_of_screen, stpos + (r + 1) * width_of_screen);
 		}
 		if(total_cells % width_of_screen){
-			print(rows * width_of_screen, total_cells);
+			print(stpos + rows * width_of_screen, stpos + total_cells);
 		}
+		stpos += float_speed;
 	}
 };
 
@@ -264,6 +271,7 @@ int main(int argc, const char * argv[]) {
 	F[0].init();
 	F[0].print();
 	printf("LINK START!\n\n");
+	char tmp; scanf("%c", &tmp);
 	queue<STATE> Q;
 	for(int t = 1; t <= total_time; t^=1){
 		F[~t&1].process(Q);
@@ -271,7 +279,7 @@ int main(int argc, const char * argv[]) {
 		if(1){
 			system("clear");
 			F[t&1].print();
-			usleep(300000);
+			usleep(sleep_time * 1000);
 		}
 	}
 	return 0;
