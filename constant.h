@@ -13,8 +13,8 @@
 
 const int total_probability = 100;
 
-const int portion_of_car = 0;
-const int portion_of_bus = 0;
+const int portion_of_car = 10;
+const int portion_of_bus = 60;
 const int portion_of_truck = total_probability - portion_of_bus - portion_of_car;
 
 const int speed_of_car = 9;
@@ -23,8 +23,8 @@ const int speed_of_truck = 1;
 
 //const int float_speed = 1;
 
-const int p_slow = 0;
-const int p_left = 0;
+const int p_slow = 1;
+const int p_left = 10;
 const int p_right = 100;
 
 const int total_lanes = 36;
