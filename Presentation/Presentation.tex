@@ -1,0 +1,183 @@
+%!TEX program = xelatex
+\documentclass{beamer}
+
+\usepackage{ctex}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+
+\beamertemplatetransparentcovereddynamicmedium
+
+\usepackage{listings}
+\usepackage{color}
+
+\usetheme{Darmstadt}
+\usecolortheme{whale}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\bfseries\color{blue},% keyword style
+  language=C++,                    % the language of the code
+  morekeywords={constexpr,decltype},% if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=4,                       % sets default tabsize to 2 spaces
+  %title=\lstname                  % show the filename of files included with \lstinputlisting; also try caption instead of title
+  %caption=\lstname
+}
+
+\begin{document}
+	\begin{frame}[containsverbatim]
+		\title{Freeway Problem}
+		\author{陈天垚}
+		\date{PPCA}
+		\titlepage
+	\end{frame}
+	
+	\section{论文解读}
+	
+	\subsection{介绍}
+	
+	\begin{frame}
+		\frametitle{问题重述}
+		\begin{block}<2->{高速公路规则}
+			\begin{itemize}
+				\item<3-> 所有车都靠右行驶
+				\item<4-> 当你要超车的时候才能向左换道
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{问题重述}
+		\begin{block}{}
+			\begin{itemize}
+				\item<2-> 如何建模模拟在固定规则下高速公路车流情况？
+				\item<3-> 如何评价一个公路规则的优劣？
+				\item<4-> 还有更好的规则吗？
+				\item<5-> 向右行使的国家的规则能够直接镜像对称到向左行驶的国家吗？
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\subsection{模型解析}
+	
+	\begin{frame}
+		\frametitle{元胞自动机}
+		\begin{block}{}
+			\begin{itemize}
+				\item<2-> 一堆节点和一个时间轴
+				\item<3-> 节点和节点之间有拓扑关系
+				\item<4-> 每个时刻，每个节点观察周围节点的状态，调整自己在下一个时刻的状态
+				\item<5-> 举例：细胞游戏、经济系统。
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{模型解析}
+		\begin{block}{总述}
+			\begin{enumerate}[Step 1.]
+				\item<2-> 调整速度
+				\item<3-> 调整位置
+				\item<4-> 换道判断
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{模型解析}
+		\begin{block}{调整速度}
+			\begin{enumerate}[Step 1.]
+				\item<2-> 如果速度还没有达到预期，那么就加一格速度
+				\item<3-> 如果按照一定概率$p_{slow}$减一格速度
+				\item<4-> 如果与前面车的距离太近，那么就减到安全速度
+			\end{enumerate}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{模型解析}
+		\begin{block}{调整位置}
+			\begin{itemize}
+				\item<2-> 位置+速度（乘单位时间间隔）
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{模型解析}
+		\begin{block}{换道判断——向左换道}
+			\begin{enumerate}[{Condition} 1.]
+				\item<2-> 速度还没有达到预期
+				\item<3-> 左前方的空间比前面的空间大
+				\item<4-> 与左后方的车距大于左后方的车速
+			\end{enumerate}
+			\begin{itemize}
+				\item<5-> 符合以上条件后，按照一定概率$p_{left}$进行换道
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{模型解析}
+		\begin{block}{换道判断——向右换道}
+			\begin{enumerate}[{Condition} 1.]
+				\item<2-> 没有向左换道
+				\item<3-> 右前方的空间比前面的空间大
+				\item<4-> 与右后方的车距大于右后方的车速
+			\end{enumerate}
+			\begin{itemize}
+				\item<5-> 符合以上条件后，按照一定概率$p_{right}$进行换道
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\section{实现}
+	
+	\subsection{细节}
+	
+	\begin{frame}
+		\frametitle{实现细节}
+		\begin{block}{优化搜索范围}
+			\begin{itemize}
+				\item<2-> 搜索六个方向汽车，稀疏图的话范围太大
+				\item<3-> 考虑到搜索范围在车速之外就没有用了
+				\item<4-> 设定一个值$out\_of\_sight$，表示视线范围，稍微比最大车速大一些
+				\item<5-> 在$out\_of\_sight$范围之内搜索即可
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+	\subsection{效果}
+	
+	\begin{frame}
+		\frametitle{效果}
+		\begin{block}{}
+			\begin{itemize}
+				\item 详见程序
+			\end{itemize}
+		\end{block}
+	\end{frame}
+	
+\end{document}
